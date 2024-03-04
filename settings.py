@@ -10,7 +10,7 @@ from scrapy.utils.log import configure_logging
 
 load_dotenv()
 
-BOT_NAME = "YOUR_PROJECT_NAME"
+BOT_NAME = "Bronya"
 
 SPIDER_MODULES = ["spiders"]
 NEWSPIDER_MODULE = "spiders"
@@ -20,8 +20,8 @@ PROXY = os.getenv("PROXY", "")
 PROXY_AUTH = os.getenv("PROXY_AUTH", "")
 PROXY_ENABLED = strtobool(os.getenv("PROXY_ENABLED", "False"))
 
-USER_AGENT_RELEASE_DATE = '2021-11-01'
-USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.54 Safari/537.36"
+USER_AGENT_RELEASE_DATE = '2024-02-27'
+USER_AGENT = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36"
 
 CONCURRENT_REQUESTS = int(os.getenv("CONCURRENT_REQUESTS", "16"))
 CONCURRENT_REQUESTS_PER_DOMAIN = int(os.getenv("CONCURRENT_REQUESTS_PER_DOMAIN", "8"))
