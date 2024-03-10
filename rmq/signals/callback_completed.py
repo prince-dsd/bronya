@@ -1,1 +1,0 @@
-callback_completed = object()

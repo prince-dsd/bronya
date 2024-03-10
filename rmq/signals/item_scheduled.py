@@ -1,1 +1,0 @@
-item_scheduled = object()
