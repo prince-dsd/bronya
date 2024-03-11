@@ -8,7 +8,7 @@ from pydantic import BaseModel, Json, PrivateAttr, Extra
 from scrapy.crawler import Crawler
 
 from rmq.connections import PikaSelectConnection
-from rmq_alternative.utils import signals as CustomSignals
+from rmq.utils import signals as CustomSignals
 
 logger = logging.getLogger(name='BaseRmqMessage')
 
