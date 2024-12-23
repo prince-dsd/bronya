@@ -8,14 +8,14 @@ volumes:
 services:
   python:
     build:
-      context: ./docker/python
+      context: ./
       args:
         - 'PYTHON_VERSION=${PYTHON_VERSION}'
     volumes:
-      - './src/python:/var/app/python'
-      - './data:/var/app/python/src/data'
-      - '.env:/var/app/python/src/.env'
-      - '/var/app/python/src/.venv/'
+      - './:/var/app/python/'
+      - './data:/var/app/'
+      - '.env:/var/app/.env'
+      - '/var/app/.venv/'
     extra_hosts:
       - 'dockerhost:${DOCKER_HOST_IP}'
     tty: true

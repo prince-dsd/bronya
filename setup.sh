@@ -2,6 +2,8 @@
 set -eu
 cd /var/app
 poetry install
+poetry shell
+scrapy
 #poetry run alembic upgrade head
 #pm2 status
 # uncomment following line if pm2.config.js file existing in python/src dir and contain instructions
