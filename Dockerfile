@@ -1,4 +1,4 @@
-ARG PYTHON_VERSION
+ARG PYTHON_VERSION='3.12.8'
 FROM python:${PYTHON_VERSION}
 SHELL ["/bin/bash", "-l", "-c"]
 
@@ -7,9 +7,10 @@ SHELL ["/bin/bash", "-l", "-c"]
 #####################################
 
 ARG TZ=UTC
-ENV TZ ${TZ}
+ENV TZ=${TZ}
 
 COPY setup.sh /usr/local/bin/
+COPY . /var/app/
 RUN set -eu && chmod +x /usr/local/bin/setup.sh
 
 RUN apt-get update && apt-get install -y curl wget gnupg2 systemd gettext-base
