@@ -2,6 +2,7 @@
 name = "Bronya"
 version = "2.3.0"
 description = ""
+package-mode = false
 authors = ["Prince Kumar <neo11prince@gmail.com>"]
 
 [tool.poetry.dependencies]
