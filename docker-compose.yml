@@ -12,8 +12,8 @@ services:
       args:
         - 'PYTHON_VERSION=${PYTHON_VERSION}'
     volumes:
-      - './:/var/app/python/'
-      - './data:/var/app/'
+      - './:/var/app'
+      - './data:/var/app/data'
       - '.env:/var/app/.env'
       - '/var/app/.venv/'
     extra_hosts:
