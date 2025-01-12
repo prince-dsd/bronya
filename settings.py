@@ -47,7 +47,10 @@ DOWNLOADER_MIDDLEWARES = {
 LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
 LOG_FILE = os.getenv("LOG_FILE") if os.getenv("LOG_FILE", "") else None
 
-ITEM_PIPELINES: Dict[str, int] = {}
+ITEM_PIPELINES = {
+    'pipelines.validation_pipeline.ValidationPipeline': 300,
+    'pipelines.rabbitmq_pipeline.RabbitMQPipeline': 400,
+}
 
 DB_HOST = os.getenv("DB_HOST", "127.0.0.1")
 DB_PORT = int(os.getenv("DB_PORT", "3306"))
@@ -73,7 +76,9 @@ HTTPCACHE_IGNORE_HTTP_CODES = list(
     map(int, (s for s in os.getenv("HTTPCACHE_IGNORE_HTTP_CODES", "").split(",") if s))
 )
 
-EXTENSIONS = {}
+EXTENSIONS = {
+    'extensions.logging_extension.LoggingExtension': 100,
+}
 
 # Send exceptions to Sentry
 IS_SENTRY_ENABLED = os.getenv("IS_SENTRY_ENABLED", "false").lower() == "true"
@@ -86,6 +91,8 @@ if IS_SENTRY_ENABLED:
     }
     # Load SentryLogging extension before others
     EXTENSIONS["scrapy_sentry_sdk.extensions.SentryLogging"] = 1
+    # Load SentryExtension
+    EXTENSIONS["extensions.sentry_extension.SentryExtension"] = 1
 
 configure_logging()
 if datetime(*[int(number) for number in USER_AGENT_RELEASE_DATE.split('-')]) + timedelta(days=180) < datetime.now():
