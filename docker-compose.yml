@@ -21,23 +21,9 @@ services:
     tty: true
     networks:
       - general
-  node:
-    build:
-      context: ./docker/node
-      args:
-        - 'NODE_VERSION=${NODE_VERSION}'
-    volumes:
-      - './src/javascript:/var/app/javascript'
-      - '.env:/var/app/javascript/src/.env'
-      - '/var/app/javascript/src/node_modules/'
-    extra_hosts:
-      - 'dockerhost:${DOCKER_HOST_IP}'
-    tty: true
-    networks:
-      - general
   mysql:
     build:
-      context: ./docker/mysql
+      context: ./Dockerfile.db
       args:
         - 'MYSQL_VERSION=${MYSQL_VERSION}'
     environment:
@@ -55,7 +41,7 @@ services:
     networks:
       - general
   rabbitmq:
-    build: ./docker/rabbitmq
+    build: ./Dockerfile.mq
     ports:
       - '5672:5672'
       - '15672:15672'
