@@ -23,7 +23,8 @@ services:
       - general
   mysql:
     build:
-      context: ./Dockerfile.db
+      context: ./
+      dockerfile: Dockerfile.db
       args:
         - 'MYSQL_VERSION=${MYSQL_VERSION}'
     environment:
@@ -41,7 +42,11 @@ services:
     networks:
       - general
   rabbitmq:
-    build: ./Dockerfile.mq
+    build:
+      context: ./
+      dockerfile: Dockerfile.rabbitmq
+      args:
+        - 'RABBITMQ_VERSION=${RABBITMQ_VERSION}'
     ports:
       - '5672:5672'
       - '15672:15672'

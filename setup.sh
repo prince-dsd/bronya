@@ -2,13 +2,13 @@
 set -eu
 
 # Navigate to the application directory
-cd /var/app
+# cd /var/app
 
 # Install dependencies using Poetry
 poetry install
 
 # Activate the Poetry virtual environment
-poetry shell
+# poetry shell
 
 # Run database migrations
 poetry run alembic upgrade head

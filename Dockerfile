@@ -20,7 +20,11 @@ RUN set -eu && \
     [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion" && \
     nvm install 13.6.0 && \
     npm install -g pm2
+# Set environment variables for Poetry
+ENV POETRY_VIRTUALENVS_CREATE=false \
+    POETRY_NO_INTERACTION=1
 
-RUN /usr/local/bin/python -m pip install --upgrade pip && /usr/local/bin/python -m pip install poetry
+RUN /usr/local/bin/python -m pip install --upgrade pip && \
+/usr/local/bin/python -m pip install --no-cache-dir poetry
 
 ENTRYPOINT ["/bin/bash", "-l", "-c", "setup.sh"]

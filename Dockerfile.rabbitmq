@@ -1,0 +1,8 @@
+ARG RABBITMQ_VERSION
+FROM rabbitmq:${RABBITMQ_VERSION}
+
+# Expose necessary ports for RabbitMQ communication and the management interface
+EXPOSE 5672 15672 15671
+
+# Run RabbitMQ server
+CMD ["rabbitmq-server"]
