@@ -1,0 +1,27 @@
+from pydantic import BaseModel
+from typing import List, Optional
+
+class FlipkartItem(BaseModel):
+    product_id: Optional[str]
+    product_name: Optional[str]
+    brand: Optional[str]
+    category: Optional[str]
+    price: Optional[str]
+    original_price: Optional[str]
+    discount: Optional[str]
+    description: Optional[str]
+    product_images: List[str]
+    product_rating: Optional[str]
+    review_count: Optional[str]
+    availability: Optional[str]
+    sku: Optional[str]
+    shipping_info: Optional[str]
+    size_color_options: List[str]
+    product_url: Optional[str]
+    product_dimensions: Optional[str]
+    weight: Optional[str]
+    material: Optional[str]
+    customer_questions: Optional[str]
+    seller_info: Optional[str]
+    return_policy: Optional[str]
+    warranty: Optional[str]
