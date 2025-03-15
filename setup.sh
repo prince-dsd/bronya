@@ -2,25 +2,25 @@
 set -eu
 
 # Navigate to the application directory
-# cd /var/app
+cd /var/app
 
 # Install dependencies using Poetry
-poetry install
+poetry install --no-venv
 
-# Activate the Poetry virtual environment
-# poetry shell
+# # Activate the Poetry virtual environment
+# # poetry shell
 
-# Run database migrations
+# # Run database migrations
 poetry run alembic upgrade head
 
-# Start PM2 processes defined in the configuration file
-pm2 start pm2.config.js
+# # Start PM2 processes defined in the configuration file
+# pm2 start pm2.config.js
 
-# Save the PM2 process list
-pm2 save
+# # Save the PM2 process list
+# pm2 save
 
-# Generate and configure the PM2 startup script
-pm2 startup | tail -n 1 | xargs sudo
+# # Generate and configure the PM2 startup script
+# pm2 startup | tail -n 1 | xargs sudo
 
-# Display the status of PM2 processes
-pm2 status
+# # Display the status of PM2 processes
+# pm2 status
