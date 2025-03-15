@@ -15,7 +15,6 @@ services:
       - './:/var/app'
       - './data:/var/app/data'
       - '.env:/var/app/.env'
-      - '/var/app/.venv/'
     extra_hosts:
       - 'dockerhost:${DOCKER_HOST_IP}'
     tty: true
