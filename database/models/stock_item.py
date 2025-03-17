@@ -30,3 +30,10 @@ class StockItemModel(
     sector = Column(String(100), nullable=True)
     industry = Column(String(100), nullable=True)
 
+    # Price Information
+    current_price = Column(DECIMAL(10, 2), nullable=True)
+    open_price = Column(DECIMAL(10, 2), nullable=True)
+    close_price = Column(DECIMAL(10, 2), nullable=True)
+    high_price = Column(DECIMAL(10, 2), nullable=True)
+    low_price = Column(DECIMAL(10, 2), nullable=True)
+    previous_close = Column(DECIMAL(10, 2), nullable=True)
