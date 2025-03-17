@@ -54,3 +54,20 @@ class StockItemModel(
     price_change_percent = Column(DECIMAL(5, 2), nullable=True)
     year_high = Column(DECIMAL(10, 2), nullable=True)
     year_low = Column(DECIMAL(10, 2), nullable=True)
+
+    # Additional Information
+    description = Column(TEXT, nullable=True)
+    website = Column(String(255), nullable=True)
+    is_active = Column(Boolean, default=True)
+    last_updated = Column(DateTime, nullable=True)
+
+    # Financial Metrics
+    revenue = Column(DECIMAL(20, 2), nullable=True)
+    profit_margin = Column(DECIMAL(5, 2), nullable=True)
+    debt_to_equity = Column(DECIMAL(10, 2), nullable=True)
+    free_cash_flow = Column(DECIMAL(20, 2), nullable=True)
+
+    # Trading Information
+    trading_currency = Column(String(10), nullable=True)
+    lot_size = Column(Integer, nullable=True)
+    face_value = Column(DECIMAL(10, 2), nullable=True)
