@@ -1,9 +1,8 @@
 from typing import Iterable
 import scrapy
-from decimal import Decimal
-from items.stock_items import StockItems
 from scrapy.exceptions import IgnoreRequest
-from rmq import RMQConnection
+from services.stock_service import StockService
+from items.stock_items import StockItems
 
 class YahooFinanceSpider(scrapy.Spider):
     name = 'yahoo_finance'
@@ -18,7 +17,7 @@ class YahooFinanceSpider(scrapy.Spider):
 
     def __init__(self, symbols=None, *args, **kwargs):
         super(YahooFinanceSpider, self).__init__(*args, **kwargs)
-        self.rmq = RMQConnection(queue_name='stock_queue')
+        self.stock_service = StockService()
         self.symbols = symbols.split(',') if symbols else ['AAPL', 'GOOGL', 'MSFT']
 
     def start_requests(self):
@@ -28,44 +27,15 @@ class YahooFinanceSpider(scrapy.Spider):
 
     def parse(self, response):
         try:
-            item = StockItems()
-            
-            # Basic Information
-            item['symbol'] = response.meta['symbol']
-            item['company_name'] = response.css('h1::text').get()
-            item['exchange'] = response.css('.exchange::text').get()
-            
-            # Price Information
-            price_section = response.css('.quote-header-section')
-            item['current_price'] = self.extract_decimal(price_section.css('.Fw\\(b\\)::text').get())
-            item['price_change'] = self.extract_decimal(price_section.css('.Fz\\(24px\\)::text').get())
-            
-            # Market Data
-            market_data = response.css('.quote-summary-details')
-            item['market_cap'] = self.extract_decimal(market_data.css('[data-test="MARKET_CAP-value"]::text').get())
-            item['pe_ratio'] = self.extract_decimal(market_data.css('[data-test="PE_RATIO-value"]::text').get())
-            
+            symbol = response.meta['symbol']
+            item = self.stock_service.extract_stock_data(response, symbol)
+            self.stock_service.send_to_queue(item)
             yield item
-            self.send_to_queue(item)
 
         except Exception as e:
-            self.logger.error(f"Error parsing response for {response.meta['symbol']}: {e}")
+            self.logger.error(f"Error parsing response for {symbol}: {e}")
             raise IgnoreRequest(f"Error parsing response: {e}")
 
-    def extract_decimal(self, value):
-        if not value:
-            return None
-        try:
-            return Decimal(value.replace(',', ''))
-        except:
-            return None
-
-    def send_to_queue(self, item):
-        try:
-            self.rmq.publish_message(str(item))
-        except Exception as e:
-            self.logger.error(f"Error sending to queue: {e}")
-
     def close(self, reason):
-        self.rmq.close_connection()
+        self.stock_service.close_connection()
         super(YahooFinanceSpider, self).close(reason)
