@@ -1,0 +1,20 @@
+import scrapy
+
+class ScreenerItem(scrapy.Item):
+    symbol = scrapy.Field()
+    company_name = scrapy.Field()
+    market_cap = scrapy.Field()
+    pe_ratio = scrapy.Field()
+    price = scrapy.Field()
+    volume = scrapy.Field()
+    sector = scrapy.Field()
+    industry = scrapy.Field()
+    dividend_yield = scrapy.Field()
+    eps = scrapy.Field()
+    beta = scrapy.Field()
+    high_52_week = scrapy.Field()
+    low_52_week = scrapy.Field()
+    moving_avg_50d = scrapy.Field()
+    moving_avg_200d = scrapy.Field()
+    relative_volume = scrapy.Field()
+    change_percent = scrapy.Field()
