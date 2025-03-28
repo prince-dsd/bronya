@@ -37,4 +37,28 @@ class ScreenerInSpider(scrapy.Spider):
             self.logger.error(f"Error parsing response: {e}")
             raise IgnoreRequest(f"Error parsing response: {e}")
 
- 
+    def extract_item(self, row):
+        def extract_data(selector):
+            return row.css(selector).get('').strip()
+
+        return ScreenerInItem(
+            symbol=extract_data(ScreenerInSelectors.SYMBOL),
+            company_name=extract_data(ScreenerInSelectors.COMPANY_NAME),
+            market_cap=extract_data(ScreenerInSelectors.MARKET_CAP),
+            current_price=extract_data(ScreenerInSelectors.CURRENT_PRICE),
+            high_price=extract_data(ScreenerInSelectors.HIGH_PRICE),
+            low_price=extract_data(ScreenerInSelectors.LOW_PRICE),
+            pe_ratio=extract_data(ScreenerInSelectors.PE_RATIO),
+            book_value=extract_data(ScreenerInSelectors.BOOK_VALUE),
+            dividend_yield=extract_data(ScreenerInSelectors.DIVIDEND_YIELD),
+            roce=extract_data(ScreenerInSelectors.ROCE),
+            roe=extract_data(ScreenerInSelectors.ROE),
+            face_value=extract_data(ScreenerInSelectors.FACE_VALUE),
+            sector=extract_data(ScreenerInSelectors.SECTOR),
+            profit_growth=extract_data(ScreenerInSelectors.PROFIT_GROWTH),
+            sales_growth=extract_data(ScreenerInSelectors.SALES_GROWTH),
+            promoter_holding=extract_data(ScreenerInSelectors.PROMOTER_HOLDING),
+            debt_to_equity=extract_data(ScreenerInSelectors.DEBT_TO_EQUITY),
+            working_capital=extract_data(ScreenerInSelectors.WORKING_CAPITAL)
+        )
+
