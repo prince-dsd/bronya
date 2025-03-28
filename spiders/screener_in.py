@@ -62,3 +62,12 @@ class ScreenerInSpider(scrapy.Spider):
             working_capital=extract_data(ScreenerInSelectors.WORKING_CAPITAL)
         )
 
+    def send_to_queue(self, item):
+        try:
+            self.rmq.publish_message(str(item))
+        except Exception as e:
+            self.logger.error(f"Error sending to queue: {e}")
+
+    def close(self, reason):
+        self.rmq.close_connection()
+        super(ScreenerInSpider, self).close(reason)
