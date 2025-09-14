@@ -1,0 +1,18 @@
+# Example config for GenericSpider (YAML format)
+start_urls:
+  - "https://example.com/products"
+selectors:
+  title: "h1.product-title::text"
+  price: ".product-price::text"
+  description: ".product-description::text"
+pagination:
+  next_page_selector: "a.next-page::attr(href)"
+# Optional login (uncomment if needed)
+#login:
+#  url: "https://example.com/login"
+#  formdata:
+#    username: "your_username"
+#    password: "your_password"
+# Optional cookies (uncomment if needed)
+#cookies:
+#  sessionid: "your_session_id"
