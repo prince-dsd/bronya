@@ -1,4 +1,4 @@
-# 📚 Bronya Project
+# 📚 Bronya Scrapper
 
 Welcome to the **Bronya** project! This repository contains a comprehensive setup for a web scraping and data processing application using Scrapy, RabbitMQ, and various other tools and libraries.
 
@@ -16,7 +16,7 @@ Ensure you have the following installed:
 
 1. **Clone the repository:**
    ```sh
-   git clone https://github.com/yourusername/bronya.git
+   git clone https://github.com/prince-dsd/bronya.git
    cd bronya
    ```
 
