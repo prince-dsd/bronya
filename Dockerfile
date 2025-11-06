@@ -1,4 +1,4 @@
-ARG PYTHON_VERSION
+ARG PYTHON_VERSION=3.11-trixie
 FROM python:${PYTHON_VERSION}
 SHELL ["/bin/bash", "-l", "-c"]
 
