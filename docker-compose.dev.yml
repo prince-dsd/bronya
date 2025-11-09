@@ -1,0 +1,46 @@
+version: "3.8"
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: bronya-dev-app
+    env_file:
+      - .env
+    volumes:
+      - .:/app          # Mount code for hot reload and live dev
+      - ./logs:/app/logs
+    ports:
+      - "8000:8000"     # Expose Python app/debug port
+    depends_on:
+      - rabbitmq
+    command: bash       # Start with a shell by default for development
+    tty: true
+    stdin_open: true
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: bronya-rabbitmq
+    ports:
+      - "5672:5672"       # AMQP protocol
+      - "15672:15672"     # RabbitMQ management UI
+    environment:
+      RABBITMQ_DEFAULT_USER: user
+      RABBITMQ_DEFAULT_PASS: password
+
+  db:
+    image: mysql:8.0
+    container_name: bronya-mysql
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: bronya
+      MYSQL_ROOT_PASSWORD: bronya_root_pass
+      MYSQL_USER: bronya_user
+      MYSQL_PASSWORD: bronya_user_pass
+    volumes:
+      - db_data:/var/lib/mysql
+
+volumes:
+  db_data:
