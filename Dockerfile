@@ -8,9 +8,21 @@ SHELL ["/bin/bash", "-l", "-c"]
 
 ARG TZ=UTC
 ENV TZ=${TZ}
+# Set environment variables for Poetry
+ENV POETRY_VIRTUALENVS_CREATE=false \
+    POETRY_NO_INTERACTION=1
+
+RUN /usr/local/bin/python -m pip install --upgrade pip && \
+/usr/local/bin/python -m pip install --no-cache-dir poetry
 
 WORKDIR /var/app
+
+COPY pyproject.toml poetry.lock ./
+RUN poetry install --no-interaction --no-ansi
+
 COPY . .
+
+
 
 COPY setup.sh /usr/local/bin/
 RUN set -eu && chmod +x /usr/local/bin/setup.sh
@@ -24,12 +36,6 @@ RUN set -eu && \
     nvm install 24.11.0 && \
     npm install -g pm2
     
-# Set environment variables for Poetry
-ENV POETRY_VIRTUALENVS_CREATE=false \
-    POETRY_NO_INTERACTION=1
-
-RUN /usr/local/bin/python -m pip install --upgrade pip && \
-/usr/local/bin/python -m pip install --no-cache-dir poetry
 
 # Expose optional API port for PM2 dashboard
 EXPOSE 9615
