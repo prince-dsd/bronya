@@ -1,0 +1,53 @@
+# Development Dockerfile for Bronya
+
+# Use an official Python image as base
+FROM python:3.11-slim
+
+# Install system build dependencies and Node.js for dev tools and PM2
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        build-essential \
+        curl \
+        git \
+        libmysqlclient-dev \
+        # Node.js 20 - modern and compatible
+        ca-certificates && \
+    curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
+    apt-get install -y nodejs
+
+# Set work directory
+WORKDIR /app
+
+# Copy Poetry installer and configure pip
+ENV POETRY_VERSION=1.8.2
+ENV POETRY_HOME=/opt/poetry
+ENV PATH="$POETRY_HOME/bin:$PATH"
+
+RUN curl -sSL https://install.python-poetry.org | python3 - --version $POETRY_VERSION \
+    && poetry config virtualenvs.create false
+
+# For Poetry and pre-commit hooks
+RUN pip install --upgrade pip pre-commit
+
+# Copy dependency files and install Python requirements first (cache dependencies)
+COPY pyproject.toml poetry.lock* ./
+
+RUN poetry install --no-root --no-interaction
+
+# Copy rest of the source code
+COPY . .
+
+# Install Node.js dependencies if pm2.config.js or package.json exists
+RUN if [ -f package.json ]; then npm install; fi
+
+# Install PM2 globally for Node.js process management
+RUN npm install -g pm2
+
+# Activate pre-commit hooks (optional: remove if not needed)
+RUN pre-commit install
+
+# Expose relevant ports (Scrapy, debug tools, or any dev servers)
+EXPOSE 8000
+
+# Default entry (can be overridden)
+CMD [ "bash" ]
