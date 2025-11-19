@@ -1,53 +1,63 @@
-# Development Dockerfile for Bronya
-
-# Use an official Python image as base
+########################################
+# BASE — Development image
+########################################
 FROM python:3.11-slim
 
-# Install system build dependencies and Node.js for dev tools and PM2
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-        build-essential \
-        curl \
-        git \
-        libmysqlclient-dev \
-        # Node.js 20 - modern and compatible
-        ca-certificates && \
-    curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
-    apt-get install -y nodejs
+ENV DEBIAN_FRONTEND=noninteractive \
+    PYTHONUNBUFFERED=1 \
+    NODE_ENV=development
 
-# Set work directory
-WORKDIR /app
+# ----------------------------------------------------
+# Install full dev toolchain (for mysqlclient, lxml, etc.)
+# ----------------------------------------------------
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl git build-essential gcc g++ make \
+    pkg-config \
+    libxml2-dev libxslt-dev \
+    zlib1g-dev \
+    libffi-dev libssl-dev \
+    default-libmysqlclient-dev \
+    openssh-client \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
 
-# Copy Poetry installer and configure pip
-ENV POETRY_VERSION=1.8.2
-ENV POETRY_HOME=/opt/poetry
-ENV PATH="$POETRY_HOME/bin:$PATH"
+# ----------------------------------------------------
+# Install Node.js (latest LTS 24.x)
+# ----------------------------------------------------
+RUN curl -fsSL https://deb.nodesource.com/setup_24.x | bash - \
+    && apt-get install -y --no-install-recommends nodejs \
+    && rm -rf /var/lib/apt/lists/*
 
-RUN curl -sSL https://install.python-poetry.org | python3 - --version $POETRY_VERSION \
-    && poetry config virtualenvs.create false
-
-# For Poetry and pre-commit hooks
-RUN pip install --upgrade pip pre-commit
-
-# Copy dependency files and install Python requirements first (cache dependencies)
-COPY pyproject.toml poetry.lock* ./
-
-RUN poetry install --no-root --no-interaction
-
-# Copy rest of the source code
-COPY . .
-
-# Install Node.js dependencies if pm2.config.js or package.json exists
-RUN if [ -f package.json ]; then npm install; fi
-
-# Install PM2 globally for Node.js process management
+# PM2 for running multiple crawlers
 RUN npm install -g pm2
 
-# Activate pre-commit hooks (optional: remove if not needed)
-RUN pre-commit install
+# ----------------------------------------------------
+# Install Python tooling
+# ----------------------------------------------------
+RUN pip install --no-cache-dir --upgrade pip setuptools wheel \
+    && pip install --no-cache-dir poetry
 
-# Expose relevant ports (Scrapy, debug tools, or any dev servers)
-EXPOSE 8000
+WORKDIR /app
 
-# Default entry (can be overridden)
-CMD [ "bash" ]
+# ----------------------------------------------------
+# Copy dependency metadata first (layer cache)
+# ----------------------------------------------------
+COPY pyproject.toml poetry.lock* ./
+
+RUN poetry config virtualenvs.create false \
+    && poetry install --no-interaction --no-ansi
+
+# ----------------------------------------------------
+# Copy full project
+# ----------------------------------------------------
+COPY . .
+
+# ----------------------------------------------------
+# Expose common dev ports
+# ----------------------------------------------------
+EXPOSE 3000 8000 9229
+
+# ----------------------------------------------------
+# DEV MODE: Keep container alive forever
+# ----------------------------------------------------
+CMD ["sleep", "infinity"]
