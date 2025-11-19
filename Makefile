@@ -12,3 +12,9 @@ remove_all:
 
 logs:
 	docker-compose logs
+
+dev:
+	docker-compose -f docker-compose.dev.yml up -d --build
+
+shell:
+	docker exec -it bronya-dev bash
