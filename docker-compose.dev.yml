@@ -1,46 +1,77 @@
-version: "3.8"
+version: "3.9"
 
 services:
-  app:
+  bronya:
     build:
       context: .
-      dockerfile: Dockerfile
-    container_name: bronya-dev-app
-    env_file:
-      - .env
+      dockerfile: Dockerfile.dev
+    container_name: bronya-dev
+    command: sleep infinity         # keep dev container running
     volumes:
-      - .:/app          # Mount code for hot reload and live dev
-      - ./logs:/app/logs
-    ports:
-      - "8000:8000"     # Expose Python app/debug port
-    depends_on:
-      - rabbitmq
-    command: bash       # Start with a shell by default for development
-    tty: true
-    stdin_open: true
-
-  rabbitmq:
-    image: rabbitmq:3-management
-    container_name: bronya-rabbitmq
-    ports:
-      - "5672:5672"       # AMQP protocol
-      - "15672:15672"     # RabbitMQ management UI
+      - ./:/app                     # live code editing
+      - pip-cache:/root/.cache/pip
+      - npm-cache:/root/.npm
     environment:
-      RABBITMQ_DEFAULT_USER: user
-      RABBITMQ_DEFAULT_PASS: password
+      PYTHONUNBUFFERED: "1"
+      NODE_ENV: development
+      # RabbitMQ connection defaults (optional)
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      MYSQL_HOST: mysql
+      MYSQL_PORT: 3306
+    ports:
+      - "3000:3000"                 # node dev
+      - "8000:8000"                 # python api / crawlers
+      - "9229:9229"                 # node debug
+    depends_on:
+      - mysql
+      - rabbitmq
+    networks:
+      - devnet
 
-  db:
+  # ----------------------------------------------------
+  # MySQL for local development
+  # ----------------------------------------------------
+  mysql:
     image: mysql:8.0
     container_name: bronya-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: bronya
     ports:
       - "3306:3306"
-    environment:
-      MYSQL_DATABASE: bronya
-      MYSQL_ROOT_PASSWORD: bronya_root_pass
-      MYSQL_USER: bronya_user
-      MYSQL_PASSWORD: bronya_user_pass
     volumes:
-      - db_data:/var/lib/mysql
+      - mysql-data:/var/lib/mysql
+    networks:
+      - devnet
+
+  # ----------------------------------------------------
+  # RabbitMQ for crawler queues
+  # With Management UI at: http://localhost:15672
+  # Login: guest / guest
+  # ----------------------------------------------------
+  rabbitmq:
+    image: rabbitmq:3.12-management
+    container_name: bronya-rabbitmq
+    ports:
+      - "5672:5672"   # AMQP for crawlers
+      - "15672:15672" # admin dashboard
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    networks:
+      - devnet
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+
+# ----------------------------------------------------
+# Networks + Volumes
+# ----------------------------------------------------
+networks:
+  devnet:
 
 volumes:
-  db_data:
+  mysql-data:
+  rabbitmq-data:
+  pip-cache:
+  npm-cache:
