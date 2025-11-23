@@ -6,7 +6,7 @@ set -eu
 # poetry run alembic upgrade head
 
 # Start PM2 processes defined in the configuration file
-pm2-runtime pm2.config.js
+# pm2-runtime pm2.config.js
 
 # Save the PM2 process list
 #pm2 save
