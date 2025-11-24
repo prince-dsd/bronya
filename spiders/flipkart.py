@@ -1,22 +1,26 @@
 import scrapy
-from rmq import RMQConnection
+from rmq.items.rmq_item import RMQItem
 from models.flipkart_item import FlipkartItem
 from utils.flipkart_selectors import FlipkartSelectors
+from utils.pydantic_to_rmq import pydantic_to_rmq
 
 class FlipkartSpider(scrapy.Spider):
     name = "flipkart"
     start_urls = ['https://www.flipkart.com/']
+    # queue name expected by rmq.pipelines.ItemProducerPipeline
+    result_queue_name = 'flipkart_queue'
 
     def __init__(self, *args, **kwargs):
         super(FlipkartSpider, self).__init__(*args, **kwargs)
-        self.rmq = RMQConnection(queue_name='flipkart_queue')
+        # Using ItemProducerPipeline for RMQ publishing; no direct rmq connection here
+        pass
 
     def parse(self, response):
         # Example parsing logic
         for product in response.css('div._1AtVbE'):
             item = self.extract_item(product, response)
-            self.send_to_queue(item.dict())
-            yield item.dict()
+            # Convert pydantic model to a scrapy RMQItem via helper
+            yield pydantic_to_rmq(item)
 
     def extract_item(self, product, response):
         def extract_data(selector, method='get', regex=None):
@@ -54,11 +58,12 @@ class FlipkartSpider(scrapy.Spider):
         )
 
     def send_to_queue(self, item):
+        # Deprecated when using ItemProducerPipeline; kept for compatibility
         try:
-            self.rmq.publish_message(str(item))
-        except Exception as e:
-            self.logger.error(f"Error sending to queue: {e}")
+            self.logger.debug("send_to_queue is deprecated when using RMQ pipeline")
+        except Exception:
+            pass
 
     def close(self, reason):
-        self.rmq.close_connection()
+        # Nothing to close here; pipeline handles RMQ connection lifecycle
         super(FlipkartSpider, self).close(reason)
