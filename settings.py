@@ -48,7 +48,8 @@ LOG_FILE = os.getenv("LOG_FILE") if os.getenv("LOG_FILE", "") else None
 
 ITEM_PIPELINES = {
     'pipelines.validation_pipeline.ValidationPipeline': 300,
-    'pipelines.rabbitmq_pipeline.RabbitMQPipeline': 400,
+    # Use rmq provided pipeline which manages pika connection lifecycle
+    'rmq.pipelines.item_producer_pipeline.ItemProducerPipeline': 400,
 }
 
 DB_HOST = os.getenv("DB_HOST", "127.0.0.1")
