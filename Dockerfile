@@ -13,13 +13,14 @@ ENV POETRY_VIRTUALENVS_CREATE=false \
     POETRY_NO_INTERACTION=1
 
 RUN /usr/local/bin/python -m pip install --upgrade pip && \
-/usr/local/bin/python -m pip install --no-cache-dir poetry
+    /usr/local/bin/python -m pip install --no-cache-dir poetry
 
 WORKDIR /var/app
 
 COPY pyproject.toml poetry.lock ./
 RUN poetry install --no-interaction --no-ansi
 
+# Copy application code
 COPY . .
 
 
@@ -35,7 +36,7 @@ RUN set -eu && \
     [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion" && \
     nvm install 24.11.0 && \
     npm install -g pm2
-    
+
 
 # Expose optional API port for PM2 dashboard
 EXPOSE 9615
